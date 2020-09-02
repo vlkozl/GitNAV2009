@@ -50,7 +50,7 @@ OBJECT Codeunit 50198 Git Functions
       RepoNotFoundErr@1000000005 : TextConst 'ENU=Repository not found.\Please do not use Navision with VPN for this kind of actions.';
       ImportCompletedSkipTxt@1000000050 : TextConst 'ENU=Import Competed, but the following objects were not found:\%1';
       FolderNotSelectedErr@1000000025 : TextConst 'ENU=Folder was not selected.';
-      CheckoutToGitBranchErr@1000000028 : TextConst 'ENU=Your current branch is not for this ticket.\\Please do git checkout %1.';
+      CheckoutToGitBranchErr@1000000028 : TextConst 'ENU=Your current branch is not for this Project.\\Please do git checkout to %1.';
 
     PROCEDURE ConvertToUTFFromFolderToRepo@1000000021(FolderPath@1000000005 : Text[250]);
     VAR
@@ -393,7 +393,7 @@ OBJECT Codeunit 50198 Git Functions
         EXIT;
 
       UserSetup.GET(USERID);
-      UserSetup.TESTFIELD("Local Repo Path"); // Example: C:\Git\LIVE
+      UserSetup.TESTFIELD("Local Repo Path"); // Example: C:\myrepo
       LocalRepoPath := UserSetup."Local Repo Path";
       // Local is used in terms of localhost/local machine
 
@@ -556,7 +556,6 @@ OBJECT Codeunit 50198 Git Functions
     PROCEDURE ImportProjectXML@1000000006(VAR ProjectNo@1000000003 : Code[10]);
     VAR
       FileRec@1000000000 : Record 2000000022;
-      TempFile@1000000002 : File;
     BEGIN
       InitializeUser(FALSE);
 
@@ -573,10 +572,6 @@ OBJECT Codeunit 50198 Git Functions
     PROCEDURE ImportMultipleProjectsXML@1000000030();
     VAR
       FileRec@1000000004 : Record 2000000022;
-      ProjectImpExp@1000000003 : XMLport 50024;
-      inStream@1000000002 : InStream;
-      TempFile@1000000001 : File;
-      FilePath@1000000000 : Text[250];
       ProjectNo@1000000005 : Code[10];
     BEGIN
       InitializeUser(FALSE);

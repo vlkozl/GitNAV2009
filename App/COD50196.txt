@@ -1,0 +1,136 @@
+OBJECT Codeunit 50196 Export Objects To Folder
+{
+  OBJECT-PROPERTIES
+  {
+    Version List=Git;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+            ExportDatabaseObjects;
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      FilePathMaskTxt@1000000003 : TextConst 'ENU=%1\%2';
+      ObjectFileMaskTxt@1000000002 : TextConst 'ENU=%1%2.txt';
+      ExportObjectsTxt@1000000001 : TextConst 'ENU=Export Objects';
+      ExportCompletedTxt@1000000000 : TextConst 'ENU=Export completed.';
+      ExportSelectFolderTxt@1000000008 : TextConst 'ENU=Please select folder to export files:';
+      FolderNotSelectedErr@1000000007 : TextConst 'ENU=Folder was not selected.';
+      Window@1000000004 : Dialog;
+      Qty@1000000009 : Integer;
+      Progressbar@1000000010 : TextConst 'ENU=" #1#########"';
+
+    PROCEDURE ExportDatabaseObjects@1000000001();
+    VAR
+      TempObject@1000000000 : TEMPORARY Record 2000000001;
+      DateValue@1000000006 : Date;
+      DateFilter@1000000004 : Text[30];
+      FolderPath@1000000001 : Text[1024];
+    BEGIN
+      FolderPath := SelectFolder;
+
+      IF FolderPath IN [FolderNotSelectedErr,''] THEN
+        ERROR(FolderNotSelectedErr);
+
+      FilterObjectPermittedRange(TempObject);
+
+      IF TempObject.FINDSET THEN BEGIN
+        Window.OPEN(ExportObjectsTxt + Progressbar);
+        REPEAT
+          Qty += 1;
+          IF Qty MOD 10 = 0 THEN
+            Window.UPDATE(1,Qty);
+
+          ExportObjectToFolder(TempObject.Type,TempObject.ID,FolderPath);
+        UNTIL TempObject.NEXT = 0;
+        Window.CLOSE;
+        MESSAGE(ExportCompletedTxt);
+      END;
+    END;
+
+    LOCAL PROCEDURE FilterObjectPermittedRange@1000000002(VAR TempObject@1000000002 : TEMPORARY Record 2000000001);
+    VAR
+      Object@1000000000 : Record 2000000001;
+      PermissionRange@1000000001 : Record 2000000044;
+    BEGIN
+      PermissionRange.SETRANGE("Object Type",PermissionRange."Object Type"::Table,PermissionRange."Object Type"::Page);
+      PermissionRange.SETRANGE("Modify Permission",PermissionRange."Modify Permission"::Yes);
+      IF PermissionRange.FINDSET THEN
+        REPEAT
+          Object.SETRANGE(Type,PermissionRange."Object Type");
+          Object.SETRANGE(ID,PermissionRange.From,PermissionRange."To");
+          IF Object.FINDSET THEN
+            REPEAT
+              TempObject := Object;
+              TempObject.INSERT;
+            UNTIL Object.NEXT = 0;
+        UNTIL PermissionRange.NEXT = 0;
+
+      TempObject.SETRANGE(ID,1,1999999999);
+    END;
+
+    LOCAL PROCEDURE ExportObjectToFolder@1000000023(ObjectType@1000000001 : Option;ObjectID@1000000000 : Integer;FolderPath@1000000004 : Text[1024]);
+    VAR
+      Object@1000000002 : Record 2000000001;
+      FilePath@1000000003 : Text[1024];
+    BEGIN
+      FilePath := CreateObjectFilePath(ObjectType,ObjectID,FolderPath);
+      Object.GET(ObjectType,'',ObjectID);
+      Object.SETRECFILTER;
+      IF NOT FILE.EXISTS(FilePath) THEN
+        EXPORTOBJECTS(FilePath,Object);
+    END;
+
+    LOCAL PROCEDURE CreateObjectFilePath@1000000003(ObjectType@1000000006 : Option;ObjectID@1000000004 : Integer;FolderPath@1000000005 : Text[1024]) : Text[1024];
+    VAR
+      PrefixOption@1000000002 : ',TAB,FOR,REP,DAT,COD,XML,MEN,PAG';
+      Prefix@1000000001 : Text[3];
+      Number@1000000003 : Text[10];
+      ObjectFileName@1000000000 : Text[30];
+    BEGIN
+      ObjectFileName := CreateObjectFileName(ObjectType,ObjectID);
+      EXIT(STRSUBSTNO(FilePathMaskTxt,FolderPath,ObjectFileName));
+    END;
+
+    LOCAL PROCEDURE CreateObjectFileName@1000000014(ObjectType@1000000005 : Option;ObjectID@1000000004 : Integer) : Text[30];
+    VAR
+      PrefixOption@1000000003 : ',TAB,FOR,REP,DAT,COD,XML,MEN,PAG';
+      Prefix@1000000002 : Text[3];
+      Number@1000000001 : Text[10];
+    BEGIN
+      PrefixOption := ObjectType;
+      Prefix := FORMAT(PrefixOption);
+      Number := FORMAT(ObjectID);
+      EXIT(STRSUBSTNO(ObjectFileMaskTxt,Prefix,Number));
+    END;
+
+    LOCAL PROCEDURE SelectFolder@1000000010() : Text[250];
+    VAR
+      MSShell@1000000001 : Automation "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE} 1.0:{13709620-C279-11CE-A49E-444553540000}:'Microsoft Shell Controls And Automation'.Shell";
+      MSShellFolder@1000000002 : Automation "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE} 1.0:{A7AE5F64-C4D7-4D7F-9307-4D24EE54B841}:'Microsoft Shell Controls And Automation'.Folder3";
+      MSShellFiles@1000000000 : Automation "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE} 1.0:{EAA7C309-BBEC-49D5-821D-64D966CB667F}:'Microsoft Shell Controls And Automation'.FolderItems3";
+      MSShellCurrentFile@1000000003 : Automation "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE} 1.0:{EDC817AA-92B8-11D1-B075-00C04FC33AA5}:'Microsoft Shell Controls And Automation'.FolderItem2";
+    BEGIN
+      IF ISCLEAR(MSShell) THEN
+        IF NOT CREATE(MSShell) THEN
+          EXIT;
+
+      MSShellFolder := MSShell.BrowseForFolder(0,ExportSelectFolderTxt,0);
+
+      IF ISCLEAR(MSShellFolder) THEN
+        EXIT(FolderNotSelectedErr);
+
+      MSShellFiles := MSShellFolder.Items;
+      MSShellCurrentFile := MSShellFiles.Item;
+      EXIT(FORMAT(MSShellCurrentFile.Path));
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

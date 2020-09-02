@@ -1,0 +1,106 @@
+OBJECT XMLport 50024 Project Import/Export
+{
+  OBJECT-PROPERTIES
+  {
+    Version List=Git;
+  }
+  PROPERTIES
+  {
+    Encoding=UTF-8;
+    Format/Evaluate=XML Format/Evaluate;
+    UseDefaultNamespace=Yes;
+    Format=Xml;
+  }
+  ELEMENTS
+  {
+    { [{DE9D68E4-0A3F-4354-A8DF-C006CA6D7B20}];  ;ProjectNo           ;Element ;Table   ;
+                                                  VariableName=Header;
+                                                  SourceTable=Table50034 }
+
+    { [{39F23850-8D03-445E-B9D7-78B65F036B04}];1 ;ProjectNo           ;Element ;Field   ;
+                                                  DataType=Code;
+                                                  SourceField=Header::No. }
+
+    { [{8DC59DA4-DC00-4CB4-88C1-8A1DD2FD51B7}];1 ;Description         ;Element ;Field   ;
+                                                  DataType=Text;
+                                                  SourceField=Header::Description }
+
+    { [{577329D9-F391-4BE2-89D0-1BA9638ED945}];1 ;GitBranch           ;Element ;Field   ;
+                                                  DataType=Text;
+                                                  SourceField=Header::Git Branch }
+
+    { [{3E2AE91F-7CF0-4C3B-8803-795CCF5C89FA}];1 ;TrackerURL          ;Element ;Field   ;
+                                                  DataType=Text;
+                                                  SourceField=Header::Tracker URL }
+
+    { [{60E160BE-26C7-4480-97F4-76E647985FA1}];1 ;StartDate           ;Element ;Field   ;
+                                                  DataType=Date;
+                                                  SourceField=Header::Start Date }
+
+    { [{01A46D91-0DF0-4BD0-87C4-DF60CDA4B3C4}];1 ;User-ID             ;Element ;Field   ;
+                                                  DataType=Code;
+                                                  FieldValidate=No;
+                                                  SourceField=Header::User ID }
+
+    { [{9A83CE8D-D935-4F07-9B25-B0E220D9CECF}];1 ;Comment             ;Element ;Field   ;
+                                                  DataType=Text;
+                                                  SourceField=Header::Comment }
+
+    { [{0164FF90-F371-419A-8AC5-8BD702D3C3D5}];1 ;Status              ;Element ;Field   ;
+                                                  DataType=Option;
+                                                  SourceField=Header::Status }
+
+    { [{65F39FC1-C85B-4A27-B103-7774D52FB60C}];1 ;ProjectLine         ;Element ;Table   ;
+                                                  VariableName=Line;
+                                                  SourceTable=Table50035;
+                                                  LinkFields=Field1=FIELD(Field1);
+                                                  LinkTable=Header }
+
+    { [{1B6DBED5-8A62-43D0-A899-CAB8769C4086}];2 ;LineProjectNo       ;Element ;Field   ;
+                                                  DataType=Code;
+                                                  SourceField=Line::Project No. }
+
+    { [{74AFB609-D46A-4405-9B72-ED354FA2511B}];2 ;LineNo              ;Element ;Field   ;
+                                                  DataType=Integer;
+                                                  SourceField=Line::Line No. }
+
+    { [{56A3B6A6-4504-458E-9ECA-BEFFBA301D01}];2 ;ObjectType          ;Element ;Field   ;
+                                                  DataType=Option;
+                                                  FieldValidate=No;
+                                                  SourceField=Line::Object Type }
+
+    { [{CBCA8C5F-D057-4C00-94AD-8184CB6E78DB}];2 ;ObjectID            ;Element ;Field   ;
+                                                  DataType=Integer;
+                                                  FieldValidate=No;
+                                                  SourceField=Line::Object ID }
+
+    { [{C0E6A56B-6A75-4561-ADCF-9CE8267BE695}];2 ;LineComment         ;Element ;Field   ;
+                                                  DataType=Text;
+                                                  SourceField=Line::Comment }
+
+  }
+  EVENTS
+  {
+  }
+  REQUESTPAGE
+  {
+    PROPERTIES
+    {
+    }
+    CONTROLS
+    {
+    }
+  }
+  CODE
+  {
+
+    PROCEDURE GetProjectNo@1000000000(VAR ProjectNo@1000000000 : Code[10]);
+    BEGIN
+      ProjectNo := Header."No.";
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,157 @@
+OBJECT Form 50083 Project List
+{
+  OBJECT-PROPERTIES
+  {
+    Version List=Git;
+  }
+  PROPERTIES
+  {
+    Width=21560;
+    Height=6710;
+    Editable=No;
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    TableBoxID=1000000000;
+    SourceTable=Table50034;
+    OnAfterGetRecord=BEGIN
+                       SetColor;
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1000000000;TableBox;220 ;220  ;21120;5500 ;HorzGlue=Both;
+                                                 VertGlue=Both;
+                                                 Editable=No }
+    { 1000000001;TextBox;0    ;0    ;2200 ;0    ;ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 HorzAlign=Left;
+                                                 SourceExpr="No." }
+    { 1000000002;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000001;
+                                                 InColumnHeading=Yes }
+    { 1000000003;TextBox;0    ;0    ;4400 ;0    ;HorzGlue=Both;
+                                                 ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 SourceExpr=Description }
+    { 1000000004;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000003;
+                                                 InColumnHeading=Yes }
+    { 1000000005;TextBox;0    ;0    ;1870 ;0    ;ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 SourceExpr="Tracker URL";
+                                                 OnAssistEdit=BEGIN
+                                                                TESTFIELD("Tracker URL");
+                                                                HYPERLINK("Tracker URL");
+                                                              END;
+                                                               }
+    { 1000000006;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000005;
+                                                 InColumnHeading=Yes }
+    { 1000000007;TextBox;0    ;0    ;1700 ;0    ;ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 SourceExpr="Start Date" }
+    { 1000000008;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000007;
+                                                 InColumnHeading=Yes }
+    { 1000000011;TextBox;0    ;0    ;2750 ;0    ;ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 SourceExpr="User ID";
+                                                 OnFormat=BEGIN
+                                                            IF "User ID" = UPPERCASE(USERID) THEN
+                                                              CurrForm."User ID".UPDATEFORECOLOR(16711680);
+                                                          END;
+                                                           }
+    { 1000000012;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000011;
+                                                 InColumnHeading=Yes }
+    { 1000000015;TextBox;19668;0    ;2200 ;0    ;Name=StatusTextBox;
+                                                 ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 DropDown=No;
+                                                 CaptionML=[DEU=Status;
+                                                            ENU=Status];
+                                                 SourceExpr=Status;
+                                                 OnFormat=BEGIN
+                                                            CurrForm.StatusTextBox.UPDATEFORECOLOR(StatusColor);
+                                                          END;
+                                                           }
+    { 1000000016;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000015;
+                                                 InColumnHeading=Yes }
+    { 1000000013;TextBox;0    ;0    ;4400 ;0    ;ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 SourceExpr=Comment }
+    { 1000000014;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000013;
+                                                 InColumnHeading=Yes }
+    { 1000000017;CommandButton;11880;5940;2200;550;
+                                                 HorzGlue=Right;
+                                                 VertGlue=Bottom;
+                                                 Default=Yes;
+                                                 PushAction=LookupOK;
+                                                 InvalidActionAppearance=Hide }
+    { 1000000018;CommandButton;14300;5940;2200;550;
+                                                 HorzGlue=Right;
+                                                 VertGlue=Bottom;
+                                                 Cancel=Yes;
+                                                 PushAction=LookupCancel;
+                                                 InvalidActionAppearance=Hide }
+    { 1000000019;CommandButton;19140;5940;2200;550;
+                                                 HorzGlue=Right;
+                                                 VertGlue=Bottom;
+                                                 PushAction=FormHelp }
+    { 1000000020;MenuButton;16720;5940;2200;550 ;HorzGlue=Right;
+                                                 VertGlue=Bottom;
+                                                 CaptionML=ENU=Project;
+                                                 Menu=MENUITEMS
+                                                 {
+                                                   { ID=1000000021;
+                                                     PushAction=RunObject;
+                                                     ShortCutKey=Shift+F5;
+                                                     CaptionML=[DEU=Karte;
+                                                                ENU=Card];
+                                                     RunObject=Form 50081;
+                                                     RunFormLinkType=OnUpdate;
+                                                     RunFormLink=No.=FIELD(No.) }
+                                                   { ID=1000000045;
+                                                     Visible=No }
+                                                 }
+                                                  }
+    { 1000000022;CheckBox;220 ;5940 ;3300 ;550  ;VertGlue=Bottom;
+                                                 Editable=Yes;
+                                                 Focusable=No;
+                                                 FocusOnClick=No;
+                                                 CaptionML=ENU=Show only my tickets;
+                                                 SourceExpr=ShowMyOnly;
+                                                 OnValidate=BEGIN
+                                                              IF ShowMyOnly THEN
+                                                                SETRANGE("User ID",USERID)
+                                                              ELSE
+                                                                SETRANGE("User ID");
+                                                            END;
+
+                                                 OnAfterValidate=BEGIN
+                                                                   CurrForm.UPDATE(FALSE);
+                                                                 END;
+                                                                  }
+  }
+  CODE
+  {
+    VAR
+      ShowMyOnly@1000000000 : Boolean;
+      StatusColor@1000000001 : Integer;
+
+    PROCEDURE SetColor@1000000000();
+    BEGIN
+      CASE Status OF
+        Status::"In Development":
+          StatusColor := 16711680; // blue
+        Status::"In Live":
+          StatusColor := 32768; // green
+        Status::OnHold:
+          StatusColor := 8388736; // purple
+        Status::Canceled:
+          StatusColor := 255; // red
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

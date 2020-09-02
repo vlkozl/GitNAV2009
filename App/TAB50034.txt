@@ -1,0 +1,97 @@
+OBJECT Table 50034 Project Header
+{
+  OBJECT-PROPERTIES
+  {
+    Version List=Git;
+  }
+  PROPERTIES
+  {
+    OnDelete=BEGIN
+               DeleteProjectLines("No.");
+             END;
+
+    CaptionML=ENU=Project Documentation Header;
+    LookupFormID=Form50083;
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Code10        ;CaptionML=ENU=No.;
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text120       ;CaptionML=ENU=Description }
+    { 3   ;   ;Tracker URL         ;Text250       ;CaptionML=ENU=Tracker URL }
+    { 4   ;   ;Start Date          ;Date          ;CaptionML=ENU=Start Date }
+    { 7   ;   ;User ID             ;Code20        ;TableRelation="User Setup"."User ID";
+                                                   CaptionML=ENU=User ID }
+    { 8   ;   ;Comment             ;Text250       ;CaptionML=ENU=Comment }
+    { 9   ;   ;Status              ;Option        ;CaptionML=ENU=Status;
+                                                   OptionString=In Development,In Live,Canceled,OnHold }
+    { 10  ;   ;No. of Objects      ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Project Line" WHERE (Project No.=FIELD(No.),
+                                                                                           Object Type=FILTER(<>' '),
+                                                                                           Object ID=FILTER(<>0)));
+                                                   CaptionML=ENU=No. of Objects;
+                                                   Editable=No }
+    { 12  ;   ;Git Branch          ;Text250       ;CaptionML=ENU=Git Branch }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+    {    ;Start Date                               }
+    {    ;Status                                   }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      ConfirmDeleteQst@1000000000 : TextConst 'ENU=Are you sure to delete this Project?';
+
+    PROCEDURE MakeFilter@1000000000();
+    VAR
+      ProjectLine@1000000000 : Record 50035;
+      File@1000000001 : File;
+      Index@1000000002 : Integer;
+      FileName@1000000005 : Text[100];
+      FilterTextLine@1000000003 : Text[1024];
+    BEGIN
+      FileName := TEMPORARYPATH + '\Filter.txt';
+      File.TEXTMODE(TRUE);
+      File.WRITEMODE(TRUE);
+      File.CREATE(FileName);
+
+      FOR Index := 1 TO 8 DO BEGIN
+        FilterTextLine := '';
+        ProjectLine.SETCURRENTKEY("Object Type","Object ID");
+        ProjectLine.SETRANGE("Project No.", "No.");
+        ProjectLine.SETRANGE("Object Type", Index);
+        IF ProjectLine.FINDSET THEN BEGIN
+          REPEAT
+            IF FilterTextLine <> '' THEN
+              FilterTextLine += '|';
+            FilterTextLine += FORMAT(ProjectLine."Object ID");
+          UNTIL ProjectLine.NEXT = 0;
+          FilterTextLine := PADSTR(FORMAT(ProjectLine."Object Type") + ': ', 15) + FilterTextLine;
+          File.WRITE(FilterTextLine);
+        END;
+      END;
+      HYPERLINK(FileName);
+    END;
+
+    LOCAL PROCEDURE DeleteProjectLines@1000000001(ProjectCode@1000000000 : Code[10]);
+    VAR
+      ProjectLine@1000000001 : Record 50035;
+    BEGIN
+      IF GUIALLOWED THEN
+        IF NOT CONFIRM(ConfirmDeleteQst) THEN
+          EXIT;
+
+      ProjectLine.SETRANGE("Project No.",ProjectCode);
+      ProjectLine.DELETEALL;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

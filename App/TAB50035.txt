@@ -1,0 +1,84 @@
+OBJECT Table 50035 Project Line
+{
+  OBJECT-PROPERTIES
+  {
+    Version List=Git;
+  }
+  PROPERTIES
+  {
+    CaptionML=ENU=Project Documentation Line;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Project No.         ;Code10        ;TableRelation="Project Header".No.;
+                                                   CaptionML=ENU=Project No. }
+    { 2   ;   ;Line No.            ;Integer       ;CaptionML=ENU=Line No. }
+    { 3   ;   ;Object Type         ;Option        ;CaptionML=ENU=Object Type;
+                                                   OptionCaptionML=ENU=" ,Table,Form,Report,Dataport,Codeunit,XMLport,MenuSuite,Page";
+                                                   OptionString=[ ,Table,Form,Report,Dataport,Codeunit,XMLport,MenuSuite,Page] }
+    { 4   ;   ;Object ID           ;Integer       ;CaptionML=ENU=Object ID }
+    { 5   ;   ;Object Name         ;Text30        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Object.Name WHERE (Type=FIELD(Object Type),
+                                                                                         ID=FIELD(Object ID)));
+                                                   CaptionML=ENU=Object Name;
+                                                   Editable=No }
+    { 8   ;   ;Comment             ;Text250       ;CaptionML=ENU=Comment }
+    { 11  ;   ;Project Status      ;Option        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Project Header".Status WHERE (No.=FIELD(Project No.)));
+                                                   CaptionML=ENU=Project Status;
+                                                   OptionString=In Development,In Live,Canceled,OnHold;
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Project No.,Line No.                    ;Clustered=Yes }
+    {    ;Object Type,Object ID                    }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE UsedInProjects@1000000000(VAR Qty@1000000002 : Integer) : Boolean;
+    VAR
+      ProjectHeader@1000000001 : Record 50034;
+      ProjectLine@1000000000 : Record 50035;
+    BEGIN
+      IF ("Object ID" = 0) OR ("Object Type" = "Object Type"::" ") THEN
+        EXIT(FALSE);
+
+      IF NOT ObjectDocLineExists(ProjectLine,"Project No.") THEN
+        EXIT(FALSE);
+
+      IF ProjectLine.FINDSET THEN
+        REPEAT
+          IF IsProjectInDevelopmentStatus(ProjectLine."Project No.",ProjectHeader) THEN
+            Qty += 1;
+        UNTIL (ProjectLine.NEXT = 0) OR (Qty > 0);
+
+      EXIT(Qty > 0);
+    END;
+
+    LOCAL PROCEDURE ObjectDocLineExists@1000000002(VAR ProjectLine@1000000000 : Record 50035;projectNo@1000000001 : Code[10]) : Boolean;
+    BEGIN
+      ProjectLine.SETRANGE("Object Type","Object Type");
+      ProjectLine.SETRANGE("Object ID","Object ID");
+      ProjectLine.SETFILTER("Project No.",'<>%1',projectNo);
+      EXIT(NOT ProjectLine.ISEMPTY);
+    END;
+
+    LOCAL PROCEDURE IsProjectInDevelopmentStatus@1000000004(ProjectNo@1000000000 : Code[10];VAR ProjectHeader@1000000001 : Record 50034) : Boolean;
+    BEGIN
+      IF ProjectHeader.GET(ProjectNo) THEN
+        IF ProjectHeader.Status = ProjectHeader.Status::"In Development" THEN
+          EXIT(TRUE);
+
+      EXIT(FALSE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

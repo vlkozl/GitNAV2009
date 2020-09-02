@@ -1,0 +1,241 @@
+OBJECT Form 50081 Project Card
+{
+  OBJECT-PROPERTIES
+  {
+    Version List=Git;
+  }
+  PROPERTIES
+  {
+    Width=19690;
+    Height=11440;
+    SourceTable=Table50034;
+    SourceTableView=SORTING(Start Date);
+    OnAfterGetCurrRecord=BEGIN
+                           CurrForm.SubForm.EDITABLE := Status <> Status::"In Live";
+                         END;
+
+    OnInsertRecord=BEGIN
+                     "User ID" := USERID;
+                     "Start Date" := TODAY;
+                   END;
+
+  }
+  CONTROLS
+  {
+    { 1000000000;TabControl;220;220 ;19250;4620 ;HorzGlue=Both;
+                                                 VertGlue=Top;
+                                                 PageNamesML=ENU=General }
+    { 1000000001;TextBox;3850 ;990  ;2750 ;440  ;ParentControl=1000000000;
+                                                 InPage=0;
+                                                 SourceExpr="No.";
+                                                 OnValidate=BEGIN
+                                                              "Tracker URL" := STRSUBSTNO(URLText,"No.");
+                                                            END;
+                                                             }
+    { 1000000002;Label  ;440  ;990  ;3300 ;440  ;ParentControl=1000000001 }
+    { 1000000003;TextBox;3850 ;1540 ;7700 ;440  ;ParentControl=1000000000;
+                                                 InPage=0;
+                                                 SourceExpr=Description }
+    { 1000000004;Label  ;440  ;1540 ;3300 ;440  ;ParentControl=1000000003 }
+    { 1000000005;TextBox;3850 ;2090 ;7700 ;440  ;ParentControl=1000000000;
+                                                 InPage=0;
+                                                 SourceExpr="Tracker URL" }
+    { 1000000006;Label  ;440  ;2090 ;3300 ;440  ;ParentControl=1000000005 }
+    { 1000000016;CommandButton;11660;2090;440;440;
+                                                 ParentControl=1000000000;
+                                                 InPage=0;
+                                                 ShowCaption=No;
+                                                 Bitmap=20;
+                                                 ToolTipML=[DEU=Hyperlink;
+                                                            ENU=Open URL];
+                                                 OnPush=BEGIN
+                                                          TESTFIELD("Tracker URL");
+                                                          HYPERLINK("Tracker URL");
+                                                        END;
+                                                         }
+    { 1000000034;TextBox;3850 ;2640 ;7700 ;440  ;ParentControl=1000000000;
+                                                 InPage=0;
+                                                 SourceExpr="Git Branch" }
+    { 1000000035;Label  ;440  ;2640 ;3300 ;440  ;ParentControl=1000000034 }
+    { 1000000024;TextBox;3850 ;3190 ;1700 ;440  ;ParentControl=1000000000;
+                                                 InPage=0;
+                                                 SourceExpr="No. of Objects" }
+    { 1000000025;Label  ;440  ;3190 ;3300 ;440  ;ParentControl=1000000024 }
+    { 1000000007;TextBox;14740;1540 ;1700 ;440  ;ParentControl=1000000000;
+                                                 InPage=0;
+                                                 HorzAlign=Center;
+                                                 SourceExpr="Start Date" }
+    { 1000000008;Label  ;12430;1540 ;2200 ;440  ;ParentControl=1000000007 }
+    { 1000000015;TextBox;14740;2640 ;4510 ;440  ;ParentControl=1000000000;
+                                                 InPage=0;
+                                                 SourceExpr=Status }
+    { 1000000019;Label  ;12430;2640 ;2200 ;440  ;ParentControl=1000000015 }
+    { 1000000011;TextBox;14740;2090 ;4510 ;440  ;ParentControl=1000000000;
+                                                 InPage=0;
+                                                 SourceExpr="User ID" }
+    { 1000000012;Label  ;12430;2090 ;2200 ;440  ;ParentControl=1000000011 }
+    { 1000000040;CommandButton;11660;2640;440;440;
+                                                 Name=ShowGitBranchButton;
+                                                 ParentControl=1000000000;
+                                                 InPage=0;
+                                                 ShowCaption=No;
+                                                 Bitmap=20;
+                                                 ToolTipML=ENU=Open Git Branch in My Tracker;
+                                                 OnPush=VAR
+                                                          URL@1000000000 : Text[250];
+                                                        BEGIN
+                                                          TESTFIELD("Git Branch");
+                                                          URL := STRSUBSTNO(GitBranchURLStr,"Git Branch");
+                                                          HYPERLINK(URL);
+                                                        END;
+                                                         }
+    { 1000000013;TextBox;3850 ;3740 ;7700 ;880  ;ParentControl=1000000000;
+                                                 InPage=0;
+                                                 MultiLine=Yes;
+                                                 SourceExpr=Comment }
+    { 1000000014;Label  ;440  ;3740 ;3300 ;440  ;ParentControl=1000000013 }
+    { 1000000017;CommandButton;17270;10670;2200;550;
+                                                 HorzGlue=Right;
+                                                 VertGlue=Bottom;
+                                                 PushAction=FormHelp }
+    { 1000000018;SubForm;220  ;4950 ;19250;5500 ;Name=SubForm;
+                                                 HorzGlue=Both;
+                                                 VertGlue=Both;
+                                                 Border=No;
+                                                 SubFormID=Form50082;
+                                                 SubFormLink=Project No.=FIELD(No.) }
+    { 1000000020;MenuButton;12430;10670;2200;550;HorzGlue=Right;
+                                                 VertGlue=Bottom;
+                                                 CaptionML=ENU=Function;
+                                                 Menu=MENUITEMS
+                                                 {
+                                                   { ID=1000000028;
+                                                     CaptionML=ENU=Make Filter;
+                                                     OnPush=BEGIN
+                                                              MakeFilter; // MYBT1557 12.04.16
+                                                            END;
+                                                             }
+                                                   { ID=1000000031;
+                                                     MenuItemType=Separator }
+                                                   { ID=1000000033;
+                                                     CaptionML=ENU=Export Objects as Text;
+                                                     OnPush=VAR
+                                                              GitFunctions@1000000000 : Codeunit 50198;
+                                                            BEGIN
+                                                              GitFunctions.ExportProjectToFolderAsText("No.");
+                                                            END;
+                                                             }
+                                                 }
+                                                  }
+    { 1000000022;MenuButton;10010;10670;2200;550;HorzGlue=Right;
+                                                 VertGlue=Bottom;
+                                                 CaptionML=ENU=Project;
+                                                 Menu=MENUITEMS
+                                                 {
+                                                   { ID=1000000023;
+                                                     PushAction=LookupTable;
+                                                     ShortCutKey=F5;
+                                                     CaptionML=[DEU=šbersicht;
+                                                                ENU=List] }
+                                                 }
+                                                  }
+    { 1000000041;MenuButton;14850;10670;2200;550;HorzGlue=Right;
+                                                 VertGlue=Bottom;
+                                                 CaptionML=ENU=Git;
+                                                 Menu=MENUITEMS
+                                                 {
+                                                   { ID=1000000043;
+                                                     CaptionML=ENU=Export Project to XML;
+                                                     OnPush=BEGIN
+                                                              ExportProjectXML;
+                                                            END;
+                                                             }
+                                                   { ID=1000000044;
+                                                     CaptionML=ENU=Import Project from XML;
+                                                     OnPush=BEGIN
+                                                              ImportProjectXML;
+                                                            END;
+                                                             }
+                                                   { ID=1000000042;
+                                                     MenuItemType=Separator }
+                                                   { ID=1000000032;
+                                                     CaptionML=ENU=Export Objects to Local Repo;
+                                                     OnPush=VAR
+                                                              GitFunctions@1000000000 : Codeunit 50198;
+                                                            BEGIN
+                                                              GitFunctions.ExportProjectToRepository("No.");
+                                                            END;
+                                                             }
+                                                   { ID=1000000045;
+                                                     CaptionML=ENU=Export Selected Objects to Local Repo;
+                                                     OnPush=BEGIN
+                                                              CurrForm.SubForm.FORM.ExportSelectedToRepo;
+                                                            END;
+                                                             }
+                                                   { ID=1000000036;
+                                                     MenuItemType=Separator }
+                                                   { ID=1000000037;
+                                                     CaptionML=ENU=Import Objects from Local Repo;
+                                                     OnPush=VAR
+                                                              GitFunctions@1000000000 : Codeunit 50198;
+                                                            BEGIN
+                                                              GitFunctions.ImportToProjectFromRepo("No.");
+                                                            END;
+                                                             }
+                                                   { ID=1000000049;
+                                                     CaptionML=ENU=Import Selected Objects from Local Repo;
+                                                     OnPush=BEGIN
+                                                              CurrForm.SubForm.FORM.ImportSelectedFromRepo;
+                                                            END;
+                                                             }
+                                                   { ID=1000000046;
+                                                     MenuItemType=Separator }
+                                                   { ID=1000000047;
+                                                     CaptionML=ENU=Restore Selected Objects from master;
+                                                     OnPush=BEGIN
+                                                              CurrForm.SubForm.FORM.RestoreFromMaster;
+                                                            END;
+                                                             }
+                                                 }
+                                                  }
+    { 1000000048;CheckBox;220 ;10670;4840 ;440  ;VertGlue=Bottom;
+                                                 Focusable=No;
+                                                 FocusOnClick=No;
+                                                 CaptionML=ENU=Check objects for Project usages;
+                                                 SourceExpr=CheckObjectUsages;
+                                                 OnValidate=BEGIN
+                                                              CurrForm.SubForm.FORM.SetCheckObjectUsages(CheckObjectUsages);
+                                                            END;
+                                                             }
+  }
+  CODE
+  {
+    VAR
+      GitBranchURLStr@1000000002 : TextConst 'ENU="https://git.mycompany.com/projects/myproject/repos/myrepo/compare/commits?sourceBranch=refs/heads/%1&targetBranch=refs/heads/master"';
+      ProjectFileNameStr@1000000003 : TextConst 'ENU=Project %1.xml';
+      CheckObjectUsages@1000000004 : Boolean;
+      URLText@1170000000 : TextConst 'ENU=https://jira.mycompany.com/browse/%1';
+      DateTimeFormatStr@1000000005 : TextConst 'ENU=<Day,2>.<Month,2>.<Year>';
+
+    LOCAL PROCEDURE ImportProjectXML@1000000023();
+    VAR
+      GitFunctions@1000000001 : Codeunit 50198;
+      ProjectNo@1000000000 : Code[10];
+    BEGIN
+      GitFunctions.ImportProjectXML(ProjectNo);
+      IF GET(ProjectNo) THEN
+        CurrForm.UPDATE(FALSE);
+    END;
+
+    LOCAL PROCEDURE ExportProjectXML@1000000002();
+    VAR
+      GitFunctions@1000000000 : Codeunit 50198;
+    BEGIN
+      GitFunctions.ExportProjectXML("No.");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

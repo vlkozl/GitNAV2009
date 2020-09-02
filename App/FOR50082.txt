@@ -1,0 +1,198 @@
+OBJECT Form 50082 Project Subform
+{
+  OBJECT-PROPERTIES
+  {
+    Version List=Git;
+  }
+  PROPERTIES
+  {
+    Width=19250;
+    Height=5500;
+    MultipleNewLines=Yes;
+    TableBoxID=1000000000;
+    SourceTable=Table50035;
+    AutoSplitKey=Yes;
+    DelayedInsert=Yes;
+    OnOpenForm=BEGIN
+                 CurrForm.UsageinProjectsTextbox.VISIBLE := CheckObjectUsages;
+               END;
+
+    OnAfterGetRecord=BEGIN
+                       UpdateWarnings;
+                     END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           UpdateWarnings;
+                         END;
+
+  }
+  CONTROLS
+  {
+    { 1000000000;TableBox;0   ;0    ;19250;5500 ;HorzGlue=Both;
+                                                 VertGlue=Both }
+    { 1000000003;TextBox;0    ;0    ;1540 ;0    ;ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 SourceExpr="Object Type";
+                                                 OnFormat=BEGIN
+                                                            CurrForm."Object Type".UPDATEFORECOLOR(LineColor);
+                                                          END;
+                                                           }
+    { 1000000004;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000003;
+                                                 InColumnHeading=Yes }
+    { 1000000005;TextBox;1535 ;0    ;1760 ;0    ;ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 BlankZero=Yes;
+                                                 SourceExpr="Object ID";
+                                                 OnFormat=BEGIN
+                                                            CurrForm."Object ID".UPDATEFORECOLOR(LineColor);
+                                                          END;
+
+                                                 OnValidate=BEGIN
+                                                              ObjectAlreadyExists;
+                                                            END;
+                                                             }
+    { 1000000006;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000005;
+                                                 InColumnHeading=Yes }
+    { 1000000015;TextBox;2911 ;1650 ;1100 ;440  ;Name=UsageinProjectsTextbox;
+                                                 Editable=No;
+                                                 ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 HorzAlign=Center;
+                                                 CaptionML=ENU=Usage in Projects;
+                                                 BlankNumbers=BlankZero;
+                                                 SourceExpr=LineProjectQty;
+                                                 OnLookup=BEGIN
+                                                            LookupProjects;
+                                                          END;
+                                                           }
+    { 1000000016;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000015;
+                                                 InColumnHeading=Yes }
+    { 1000000007;TextBox;0    ;0    ;5110 ;0    ;ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 SourceExpr="Object Name";
+                                                 OnFormat=BEGIN
+                                                            CurrForm."Object Name".UPDATEFORECOLOR(LineColor);
+                                                          END;
+                                                           }
+    { 1000000008;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000007;
+                                                 InColumnHeading=Yes }
+    { 1000000011;TextBox;7687 ;0    ;4510 ;0    ;HorzGlue=Both;
+                                                 ParentControl=1000000000;
+                                                 InColumn=Yes;
+                                                 SourceExpr=Comment }
+    { 1000000012;Label  ;0    ;0    ;0    ;0    ;ParentControl=1000000011;
+                                                 InColumnHeading=Yes }
+  }
+  CODE
+  {
+    VAR
+      LineWarning@1000000000 : Boolean;
+      LineColor@1000000001 : Integer;
+      LineProjectQty@1000000002 : Integer;
+      Text001@1000000003 : TextConst 'ENU="Information: Object Type %1, %2=%3 already exist in Line No. %3!"';
+      Text002@1000000004 : TextConst 'ENU=New object cannot have ID less than 50000!';
+      CheckObjectUsages@1000000005 : Boolean;
+
+    PROCEDURE UpdateWarnings@1000000001();
+    BEGIN
+      LineProjectQty := 0;
+      LineWarning := FALSE;
+
+      IF CheckObjectUsages THEN
+        LineWarning := UsedInProjects(LineProjectQty);
+
+      UpdateLineColor;
+    END;
+
+    LOCAL PROCEDURE UpdateLineColor@1000000002();
+    BEGIN
+      CASE LineWarning OF
+        TRUE:
+          LineColor := 255;
+        FALSE:
+          LineColor := 0;
+      END;
+    END;
+
+    PROCEDURE LookupProjects@1000000003();
+    VAR
+      ProjectHeader@1000000001 : Record 50034;
+      ProjectLine@1000000000 : Record 50035;
+    BEGIN
+      IF LineProjectQty = 0 THEN
+        EXIT;
+
+      ProjectLine.SETCURRENTKEY("Object Type","Object ID");
+      ProjectLine.SETRANGE("Object Type","Object Type");
+      ProjectLine.SETRANGE("Object ID","Object ID");
+      ProjectLine.SETFILTER("Project No.",'<>%1',"Project No.");
+      IF ProjectLine.FINDSET THEN
+        REPEAT
+          IF ProjectHeader.GET(ProjectLine."Project No.") THEN
+            IF ProjectHeader.Status = ProjectHeader.Status::"In Development" THEN
+              ProjectHeader.MARK(TRUE);
+        UNTIL ProjectLine.NEXT = 0;
+
+      ProjectHeader.FILTERGROUP(2);
+      ProjectHeader.MARKEDONLY(TRUE);
+      ProjectHeader.FILTERGROUP(0);
+      FORM.RUNMODAL(FORM::"Project List",ProjectHeader);
+    END;
+
+    PROCEDURE ExportSelectedToRepo@1000000006();
+    VAR
+      ProjectLine@1000000001 : Record 50035;
+      GitFunctions@1000000000 : Codeunit 50198;
+    BEGIN
+      CurrForm.SETSELECTIONFILTER(ProjectLine);
+      GitFunctions.ExportProjectLinesToRepo(ProjectLine,"Project No.");
+    END;
+
+    PROCEDURE ImportSelectedFromRepo@1000000009();
+    VAR
+      ProjectLine@1000000001 : Record 50035;
+      GitFunctions@1000000000 : Codeunit 50198;
+    BEGIN
+      CurrForm.SETSELECTIONFILTER(ProjectLine);
+      GitFunctions.ImportProjectLinesFromRepo(ProjectLine,"Project No.");
+    END;
+
+    PROCEDURE ObjectAlreadyExists@1000000005();
+    VAR
+      ProjectLine@1000000000 : Record 50035;
+    BEGIN
+      IF "Object ID" <> 0 THEN BEGIN
+        CALCFIELDS("Object Name");
+        ProjectLine.SETRANGE("Project No.","Project No.");
+        ProjectLine.SETRANGE("Object Type","Object Type");
+        ProjectLine.SETRANGE("Object ID","Object ID");
+        ProjectLine.SETFILTER("Line No.",'<>%1',"Line No.");
+        IF ProjectLine.FINDFIRST THEN
+          MESSAGE(
+            Text001,
+            STRSUBSTNO('%1',"Object Type"),
+            FIELDCAPTION("Object ID"),
+            "Object ID",ProjectLine."Line No.");
+      END;
+    END;
+
+    PROCEDURE SetCheckObjectUsages@1000000007(NewCheckObjectUsages@1000000000 : Boolean);
+    BEGIN
+      CheckObjectUsages := NewCheckObjectUsages;
+      CurrForm.UsageinProjectsTextbox.VISIBLE := NewCheckObjectUsages;
+    END;
+
+    PROCEDURE RestoreFromMaster@1000000008();
+    VAR
+      ProjectLine@1000000001 : Record 50035;
+      GitFunctions@1000000000 : Codeunit 50198;
+    BEGIN
+      CurrForm.SETSELECTIONFILTER(ProjectLine);
+      GitFunctions.RestoreObjectsFromMaster(ProjectLine,"Project No.");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

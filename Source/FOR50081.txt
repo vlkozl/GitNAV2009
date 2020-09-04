@@ -11,7 +11,7 @@ OBJECT Form 50081 Project Card
     SourceTable=Table50034;
     SourceTableView=SORTING(Start Date);
     OnAfterGetCurrRecord=BEGIN
-                           CurrForm.SubForm.EDITABLE := Status <> Status::"In Live";
+                           CurrForm.SubForm.EDITABLE := Status <> Status::"Deployed";
                          END;
 
     OnInsertRecord=BEGIN
@@ -46,8 +46,7 @@ OBJECT Form 50081 Project Card
                                                  InPage=0;
                                                  ShowCaption=No;
                                                  Bitmap=20;
-                                                 ToolTipML=[DEU=Hyperlink;
-                                                            ENU=Open URL];
+                                                 ToolTipML=[ENU=Open URL];
                                                  OnPush=BEGIN
                                                           TESTFIELD("Tracker URL");
                                                           HYPERLINK("Tracker URL");
@@ -112,7 +111,7 @@ OBJECT Form 50081 Project Card
                                                    { ID=1000000028;
                                                      CaptionML=ENU=Make Filter;
                                                      OnPush=BEGIN
-                                                              MakeFilter; // MYBT1557 12.04.16
+                                                              MakeFilter;
                                                             END;
                                                              }
                                                    { ID=1000000031;
@@ -135,8 +134,7 @@ OBJECT Form 50081 Project Card
                                                    { ID=1000000023;
                                                      PushAction=LookupTable;
                                                      ShortCutKey=F5;
-                                                     CaptionML=[DEU=šbersicht;
-                                                                ENU=List] }
+                                                     CaptionML=[ENU=List] }
                                                  }
                                                   }
     { 1000000041;MenuButton;14850;10670;2200;550;HorzGlue=Right;

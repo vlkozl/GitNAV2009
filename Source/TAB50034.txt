@@ -24,7 +24,7 @@ OBJECT Table 50034 Project Header
                                                    CaptionML=ENU=User ID }
     { 8   ;   ;Comment             ;Text250       ;CaptionML=ENU=Comment }
     { 9   ;   ;Status              ;Option        ;CaptionML=ENU=Status;
-                                                   OptionString=In Development,In Live,Canceled,OnHold }
+                                                   OptionString=In Development,Deployed,Canceled,OnHold }
     { 10  ;   ;No. of Objects      ;Integer       ;FieldClass=FlowField;
                                                    CalcFormula=Count("Project Line" WHERE (Project No.=FIELD(No.),
                                                                                            Object Type=FILTER(<>' '),

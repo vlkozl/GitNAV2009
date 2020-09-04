@@ -393,7 +393,7 @@ OBJECT Codeunit 50198 Git Functions
         EXIT;
 
       UserSetup.GET(USERID);
-      UserSetup.TESTFIELD("Local Repo Path"); // Example: C:\myrepo
+      UserSetup.TESTFIELD("Local Repo Path"); // Example: C:\Cronus2009
       LocalRepoPath := UserSetup."Local Repo Path";
       // Local is used in terms of localhost/local machine
 

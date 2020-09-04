@@ -65,8 +65,7 @@ OBJECT Form 50083 Project List
                                                  ParentControl=1000000000;
                                                  InColumn=Yes;
                                                  DropDown=No;
-                                                 CaptionML=[DEU=Status;
-                                                            ENU=Status];
+                                                 CaptionML=[ENU=Status];
                                                  SourceExpr=Status;
                                                  OnFormat=BEGIN
                                                             CurrForm.StatusTextBox.UPDATEFORECOLOR(StatusColor);
@@ -103,8 +102,7 @@ OBJECT Form 50083 Project List
                                                    { ID=1000000021;
                                                      PushAction=RunObject;
                                                      ShortCutKey=Shift+F5;
-                                                     CaptionML=[DEU=Karte;
-                                                                ENU=Card];
+                                                     CaptionML=[ENU=Card];
                                                      RunObject=Form 50081;
                                                      RunFormLinkType=OnUpdate;
                                                      RunFormLink=No.=FIELD(No.) }
@@ -141,7 +139,7 @@ OBJECT Form 50083 Project List
       CASE Status OF
         Status::"In Development":
           StatusColor := 16711680; // blue
-        Status::"In Live":
+        Status::"Deployed":
           StatusColor := 32768; // green
         Status::OnHold:
           StatusColor := 8388736; // purple

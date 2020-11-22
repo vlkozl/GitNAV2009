@@ -2,7 +2,7 @@
 
 REM Create folders structure for NAV 2009 repository for all object types
 REM USAGE:
-REM Required parameter: local repository path
+REM Required parameter: local repository path, like C:\Repos\Cronus
 
 mkdir %1\App
 mkdir %1\App\Table

@@ -1,4 +1,9 @@
 @echo off
+
+REM Creates 3 folders: NavTemp, NavTempCountry, NavTempUTF.
+REM Called from Nav 2009 before any Import/Export operations.
+REM NavTemp is not in use at the moment
+
 SET NavTemp=%1NavTemp
 SET NavTempCountry=%1NavTempCountry
 SET NavTempUTF=%1NavTempUTF

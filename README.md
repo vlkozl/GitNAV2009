@@ -23,9 +23,9 @@ Each development represents a new *Project* record in the `Table 50034 Project H
 ## Usage
 - Use `Form 50081 "Project Card"` to create a new Project.
 - Have a new git branch and fill it in project `"Git Branch"` field.
-- Export changed objects from `Dev` to local repo.
+- Using Project Card, export changed objects to local repo.
 - Review, stage, commit and then push your changes to remote (standard Git workflow).
 - Optional: create pull request to start code review and verify changes together with others.
 - Optional: when Pull Request is approved, you branch can be processed further.
-- Deploy changes to `Prod`
-- Merge project branch with parent git branch
+- Deploy changes to `Prod` - use Import objects functions in Project Card.
+- Merge project branch with parent git branch.

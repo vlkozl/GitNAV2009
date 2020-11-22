@@ -160,9 +160,7 @@ OBJECT Codeunit 50198 Git Functions
     LOCAL PROCEDURE FilterProjectLines@1000000027(VAR ProjectLine@1000000000 : Record 50035;ProjectNo@1000000001 : Code[10]);
     BEGIN
       ProjectLine.SETRANGE("Project No.",ProjectNo);
-      ProjectLine.SETFILTER(
-        "Object Type",'<>%1&<>%2',
-        ProjectLine."Object Type"::" ",ProjectLine."Object Type"::MenuSuite);
+      ProjectLine.SETFILTER("Object Type",'<>%1',ProjectLine."Object Type"::" ");
       ProjectLine.SETFILTER("Object ID",'>%1',0);
     END;
 
@@ -321,12 +319,12 @@ OBJECT Codeunit 50198 Git Functions
 
     LOCAL PROCEDURE StreamFileToUTF@1000000024(FileFrom@1000000004 : Text[250];FileTo@1000000007 : Text[250]);
     BEGIN
-      StreamFileFromTo(FileFrom,FileTo,'CP850','UTF-8');
+      StreamFileFromTo(FileFrom,FileTo,'CP850','UTF-8'); // adjust your national code page here
     END;
 
     LOCAL PROCEDURE StreamFileToCountry@1000000043(FileFrom@1000000004 : Text[250];FileTo@1000000007 : Text[250]);
     BEGIN
-      StreamFileFromTo(FileFrom,FileTo,'UTF-8','CP850');
+      StreamFileFromTo(FileFrom,FileTo,'UTF-8','CP850'); // adjust your national code page here
     END;
 
     LOCAL PROCEDURE StreamFileFromTo@1000000038(FileFrom@1000000004 : Text[250];FileTo@1000000007 : Text[250];CharsetFrom@1000000006 : Text[10];CharsetTo@1000000005 : Text[10]);
@@ -370,16 +368,6 @@ OBJECT Codeunit 50198 Git Functions
       IF CREATE(MSCShell) THEN BEGIN
         Int := 0;
         MSCShell.ShellExecute(App,Param,Int);
-        CLEAR(MSCShell);
-      END;
-    END;
-
-    LOCAL PROCEDURE RunShellOpen@1000000018(App@1000000000 : Text[1024]);
-    VAR
-      MSCShell@1000000003 : Automation "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE} 1.0:{13709620-C279-11CE-A49E-444553540000}:'Microsoft Shell Controls And Automation'.Shell";
-    BEGIN
-      IF CREATE(MSCShell) THEN BEGIN
-        MSCShell.Open(App);
         CLEAR(MSCShell);
       END;
     END;

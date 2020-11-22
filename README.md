@@ -2,7 +2,14 @@
 Git integration for Microsoft Dynamics NAV 2009
 
 ## Description
-Developments for NAV usually include limited number of objects which can be tracked by source control system like Git as a separate text files. Git use branches to separate changes between epics/tasks/tickets/workitems/developers, so Git branch in primitive words, is a "list of changed objects" related to the particular change request. The problem is that NAV development environment does not naturally have any similar data structure. Therefore, it should be introduced. 
+Introduction to Source Control Management for Navision world has been made in the past many times. For example please take a look on this video: https://youtu.be/HJOsjLXbskc Benefits even for legacy Nav 2009 versions are:
+ - clear history of changes linked with external tracking systems of Jira/TFS/GitHub
+ - ability to make code reviews and get advantages of dev team expertise
+ - quick rollbacks
+ - no need to work with exported/imported text files/FOBs manually
+ - ability to combine changes of multiple requests/tickets into single deployment
+
+Developments for Nav usually include limited number of objects which can be tracked by SCM system like Git as a separate text files. Git use branches to separate changes between epics/tasks/tickets/workitems/developers, so Git branch is, in simple words, a "list of changed objects" related to the specific change request. The problem is that NAV development environment does not naturally have any similar data structure. Therefore, it should be introduced. 
 
 Each development represents a new *Project* record in the `Table 50034 Project Header` table. Project lines should be populated manually with changed objects. Both header and line records will help maintain changes related only to particular task/ticket/project. So the changed objects can be exported, imported, delivered and deployed within a certain branch only.
 

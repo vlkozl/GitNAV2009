@@ -8,7 +8,7 @@ Each development represents a new *Project* record in the `Table 50034 Project H
 
 ### C/AL structure
  - 2 tables: header and lines for storing Project data
- - 3 forms exposing Project data, allowing to run actions related to the project/Git
+ - 3 forms (Document, Subform, List) exposing Project data, allowing to run actions related to the project/Git
  - 2 codeunits: 
    - 50196 export all objects from database to a folder selected considering license permissions
    - 50198 contains functions required to import/export objects with automatic encoding conversion from national to UTF-8 and vice versa

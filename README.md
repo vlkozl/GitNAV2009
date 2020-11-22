@@ -14,7 +14,7 @@ Each development represents a new *Project* record in the `Table 50034 Project H
    - 50198 contains functions required to import/export objects with automatic encoding conversion from national to UTF-8 and vice versa
  - 1 xmlport is optional and may be required to transfer project data between computers/developers
 
-### BAT files:
+### BAT files
  - `.\Install\MakeRepoFolders.bat ` Create folders structure for NAV 2009 repository for all object types
  - `.\Install\MoveObjectsToRepository.bat` Move text objects from NAV database to respective repository subfolders
  - `.\Tools\CMD\CreateTempDirs.bat` Create temporary folders for files encoding conversion, used in `Codeunit 50198`

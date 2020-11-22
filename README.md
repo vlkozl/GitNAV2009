@@ -17,7 +17,6 @@ Each development represents a new *Project* record in the `Table 50034 Project H
 ### BAT files:
  - `.\Install\MakeRepoFolders.bat ` Create folders structure for NAV 2009 repository for all object types
  - `.\Install\MoveObjectsToRepository.bat` Move text objects from NAV database to respective repository subfolders
- - `.\Tools\CMD\mkdir.bat` Create folder, used by `Codeunit 50198`
  - `.\Tools\CMD\CreateTempDirs.bat` Create temporary folders for files encoding convertsion, used by `Codeunit 50198`
  
 ## Usage

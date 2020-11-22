@@ -7,7 +7,7 @@ Developments for NAV usually include limited number of objects which can be trac
 Each development represents a new *Project* record in the `Table 50034 Project Header` table. Project lines should be populated manually with changed objects. Both header and line records will help maintain changes related only to particular task/ticket/project. So the changed objects can be exported, imported, delivered and deployed within a certain branch only.
 
 ### C/AL structure
- - 2 tables: for header and lines for storing Project data
+ - 2 tables: header and lines for storing Project data
  - 3 forms exposing Project data, allowing to run actions related to the project/Git
  - 2 codeunits: 
    - 50196 export all objects from database to a folder selected considering license permissions
@@ -17,7 +17,7 @@ Each development represents a new *Project* record in the `Table 50034 Project H
 ### BAT files:
  - `.\Install\MakeRepoFolders.bat ` Create folders structure for NAV 2009 repository for all object types
  - `.\Install\MoveObjectsToRepository.bat` Move text objects from NAV database to respective repository subfolders
- - `.\Tools\CMD\CreateTempDirs.bat` Create temporary folders for files encoding convertsion, used by `Codeunit 50198`
+ - `.\Tools\CMD\CreateTempDirs.bat` Create temporary folders for files encoding conversion, used in `Codeunit 50198`
  
 ## Usage
 - Use `Form 50081 "Project Card"` to create a new Project.
@@ -28,3 +28,7 @@ Each development represents a new *Project* record in the `Table 50034 Project H
 - Optional: when Pull Request is approved, you branch can be processed further.
 - Deploy changes to `Prod` - use Import objects functions in Project Card.
 - Merge project branch with parent git branch.
+
+## Contact
+Please feel free to ask questions, suggest changes and fixes, or just comment.
+Telegram: https://t.me/Skyeman

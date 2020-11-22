@@ -2,7 +2,7 @@
 Git integration for Microsoft Dynamics NAV 2009
 
 ## Description
-Introduction to Source Control Management for Navision world has been made in the past many times. For example please take a look on this video: https://youtu.be/HJOsjLXbskc Benefits even for legacy Nav 2009 versions are:
+Introduction to Source Control Management for Navision world has been made in the past many times. For example please take a look on this video: https://youtu.be/HJOsjLXbskc Even for legacy Nav 2009 versions there are some benefits:
  - clear history of changes linked with external tracking systems of Jira/TFS/GitHub
  - ability to make code reviews and get advantages of dev team expertise
  - quick rollbacks

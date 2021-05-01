@@ -619,7 +619,7 @@ OBJECT Codeunit 50198 Git Functions
     {
       // By default all Navision country versions export files with national encoding.
       // It is recommended to determine one and set it in both "StreamFileToUTF" and "StreamFileToCountry" functions.
-      // By default CP850 is used for European languages.
+      // By default ASCII with CP850 is used for European languages.
     }
     END.
   }

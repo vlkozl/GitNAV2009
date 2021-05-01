@@ -23,15 +23,15 @@
 - import objects to `Dev` and `Prod` and compile
 
 ### Setup Git repository
-- make a new folder on your machine for a Git repository where objects from a `Prod` database will be stored, for example: C:\Cronus2009
+- make a new folder on your machine for a Git repository where objects from a `Prod` database will be stored, for example: "C:\Repos\Cronus"
 - create folders structure using `MakeRepoFolders.bat`
-  - open cmd.exe, `cd C:` and run: `MakeRepoFolders.bat "C:\Cronus2009"`
-- in both `Dev` and `Prod` databases fill `"Local Repo Path"` field at `"User Setup"` table with path to this repository C:\Cronus2009
+  - open cmd.exe, `cd to C:\Repos\Cronus` and run: `MakeRepoFolders.bat "C:\Repos\Cronus"`
+- in both `Dev` and `Prod` databases fill `"Local Repo Path"` field in `"User Setup"` table with path to this repository `C:\Repos\Cronus`
 - export all NAV objects from `Prod` as separate txt files using `Codeunit 50196 "Export Objects To Folder"`; make sure they have UTF-8 encoding
 - put exported files to respective subfolders using `MoveObjectsToRepository.bat`
-  - open cmd.exe, call `MoveObjectsToRepository.bat "exported objects folder" "repository path"` 
+  - open cmd.exe, call `MoveObjectsToRepository.bat "exported objects folder" ""C:\Repos\Cronus"` 
 - put BAT files from this project `.\Tools\CMD` to repository `.\Tools\CMD` subfolder
-- setup Git user, initialize a new Git repository for your local repo at C:\Cronus2009
+- setup Git user, initialize a new Git repository for your local repo at C:\Repos\Cronus
 - setup remote for your local Git
   - references: https://git-scm.com/docs/git-init, https://www.atlassian.com/git/tutorials/setting-up-a-repository
 - stage, commit and push changes to remote as initial commit

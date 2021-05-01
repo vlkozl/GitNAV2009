@@ -2,7 +2,7 @@
 
 REM USAGE:
 REM First parameter: source folder
-REM Second parameter: target folder
+REM Second parameter: target folder, normally it should be local repo path like "C:\Repos\Cronus" where all subfolders structure exists.
 
 SET FromPath=%1
 SET ToPath=%2
